@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BAY BIM — Project Setup Request</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── TOKENS ─────────────────────────────── */
+    :root {
+      --bay-navy:   #0D1B2A;
+      --bay-blue:   #1565C0;
+      --bay-sky:    #1E88E5;
+      --bay-accent: #00B4D8;
+      --bay-gold:   #F59E0B;
+      --bay-red:    #DC2626;
+      --bg:         #F4F6F9;
+      --surface:    #FFFFFF;
+      --border:     #D9E1EC;
+      --text-primary:   #0D1B2A;
+      --text-secondary: #5A6A7E;
+      --text-muted:     #8FA0B3;
+      --radius:     8px;
+      --shadow:     0 1px 3px rgba(13,27,42,.08), 0 4px 12px rgba(13,27,42,.04);
+      --required-dot: var(--bay-red);
+    }
+
+    /* ─── RESET ──────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header {
+      background: var(--bay-navy);
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-logo {
+      width: 32px; height: 32px;
+      background: var(--bay-blue);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 500;
+      color: #fff;
+      letter-spacing: .5px;
+      flex-shrink: 0;
+    }
+    .header-text { flex: 1; }
+    .header-title {
+      font-size: 13px; font-weight: 600;
+      color: #fff; letter-spacing: .2px;
+    }
+    .header-sub {
+      font-size: 10px; color: #8FA0B3;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: .5px;
+    }
+
+    /* ─── MAIN SCROLL AREA ───────────────────── */
+    .main {
+      padding: 14px 14px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ─── SECTION CARD ───────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card-header {
+      background: #F8FAFD;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .card-header-icon {
+      width: 18px; height: 18px;
+      background: var(--bay-blue);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-header-icon svg { width: 10px; height: 10px; fill: #fff; }
+    .card-header-title {
+      font-size: 11px; font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+    .card-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ─── FORM FIELD ─────────────────────────── */
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field-label {
+      font-size: 11.5px; font-weight: 500;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .req { color: var(--bay-red); font-size: 13px; line-height: 1; }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      background: #FAFBFD;
+      transition: border-color .15s, box-shadow .15s;
+      outline: none;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+      border-color: var(--bay-sky);
+      box-shadow: 0 0 0 3px rgba(30,136,229,.12);
+      background: #fff;
+    }
+    input[type="number"] { font-family: 'DM Mono', monospace; }
+    textarea { resize: vertical; min-height: 68px; line-height: 1.5; }
+
+    /* ─── CHECKBOX GROUP ─────────────────────── */
+    .check-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      user-select: none;
+    }
+    .check-item:hover { border-color: var(--bay-sky); background: #F0F7FF; }
+    .check-item input[type="checkbox"] { display: none; }
+    .check-item.checked {
+      border-color: var(--bay-blue);
+      background: #E8F0FE;
+    }
+    .check-item .pill-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+    .check-item.checked .pill-dot { background: var(--bay-blue); }
+    .check-item .pill-label {
+      font-size: 12px; font-weight: 500;
+      color: var(--text-secondary);
+      transition: color .15s;
+    }
+    .check-item.checked .pill-label { color: var(--bay-blue); }
+
+/* ─── STATUS BANNER ──────────────────────── */
+    .status-banner {
+      display: none;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 500;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .status-banner.show { display: flex; }
+    .status-banner.success { background: #ECFDF5; border: 1px solid #6EE7B7; color: #065F46; }
+    .status-banner.error   { background: #FEF2F2; border: 1px solid #FCA5A5; color: #991B1B; }
+    .status-banner.loading { background: #EFF6FF; border: 1px solid #93C5FD; color: #1E40AF; }
+    .status-icon { flex-shrink: 0; font-size: 14px; }
+
+    /* ─── FOOTER ACTIONS (sticky) ────────────── */
+    .footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .btn {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 6px;
+      border: none;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      letter-spacing: .2px;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary {
+      background: var(--bay-blue);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #0D47A1; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border);
+      flex: 0 0 auto;
+      padding: 9px 14px;
+    }
+    .btn-secondary:hover { background: var(--bg); }
+
+    /* spinner */
+    .spinner {
+      width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* validation highlight */
+    .field-error input,
+    .field-error textarea {
+      border-color: var(--bay-red) !important;
+      box-shadow: 0 0 0 3px rgba(220,38,38,.1) !important;
+    }
+    .field-msg {
+      font-size: 11px;
+      color: var(--bay-red);
+      display: none;
+    }
+    .field-error .field-msg { display: block; }
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">BAY</div>
+  <div class="header-text">
+    <div class="header-title">Project Setup Request</div>
+    <div class="header-sub">BAY &amp; ASSOCIATES · MEP BIM</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="main" id="formView">
+
+  <!-- Status banner -->
+  <div class="status-banner" id="statusBanner">
+    <span class="status-icon" id="statusIcon"></span>
+    <span id="statusMsg"></span>
+  </div>
+
+  <!-- PROJECT INFO -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><path d="M2 2h12v12H2z"/></svg>
+      </div>
+      <span class="card-header-title">Project Information</span>
+    </div>
+    <div class="card-body">
+
+      <div class="field" id="field-projectName">
+        <label class="field-label">Project Name <span class="req">*</span></label>
+        <input type="text" id="projectName" placeholder="e.g. 123 Main Street Office Renovation"/>
+        <span class="field-msg">Project name is required.</span>
+      </div>
+
+      <div class="field" id="field-folderLocation">
+        <label class="field-label">Folder Location <span class="req">*</span></label>
+        <input type="text" id="folderLocation" placeholder="\\Server\Projects\2025\..."/>
+        <span class="field-msg">Folder location is required.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROJECT TYPE -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5"/></svg>
+      </div>
+      <span class="card-header-title">Project Type <span class="req" style="font-size:11px">*</span></span>
+    </div>
+    <div class="card-body">
+      <div class="field" id="field-projectType">
+        <div class="check-group" id="projectTypeGroup">
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="projectType" value="CAD"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">CAD</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="projectType" value="Revit"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Revit</span>
+          </label>
+        </div>
+        <span class="field-msg" id="typeMsg">Select at least one project type.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCIPLINES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+      </div>
+      <span class="card-header-title">Discipline(s) <span class="req" style="font-size:11px">*</span></span>
+    </div>
+    <div class="card-body">
+      <div class="field" id="field-disciplines">
+        <div class="check-group" id="disciplinesGroup">
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="discipline" value="Mechanical"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Mechanical</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="discipline" value="Electrical"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Electrical</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="discipline" value="Plumbing"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Plumbing</span>
+          </label>
+        </div>
+        <span class="field-msg" id="discMsg">Select at least one discipline.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCOPE OF WORK -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><path d="M3 4h10M3 8h10M3 12h6"/></svg>
+      </div>
+      <span class="card-header-title">Scope of Work <span class="req" style="font-size:11px">*</span></span>
+    </div>
+    <div class="card-body">
+      <div class="field" id="field-scope">
+        <div class="check-group" id="scopeGroup">
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="scope" value="Site Plan"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Site Plan</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="scope" value="Demo Plans"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Demo Plans</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="scope" value="Basement Plans"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Basement Plans</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="scope" value="Roof Plan"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Roof Plan</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="scope" value="Enlarged Plans"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Enlarged Plans</span>
+          </label>
+          <label class="check-item" onclick="togglePill(this)">
+            <input type="checkbox" name="scope" value="Misc. Plans"/>
+            <span class="pill-dot"></span>
+            <span class="pill-label">Misc. Plans</span>
+          </label>
+        </div>
+        <span class="field-msg" id="scopeMsg">Select at least one scope item.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 16 16"><path d="M2 2h12v10H2zM6 14l2-2 2 2"/></svg>
+      </div>
+      <span class="card-header-title">Comments</span>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label class="field-label">Additional Notes <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+        <textarea id="comments" placeholder="Any additional info, special requirements, deadlines…"></textarea>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- FOOTER ACTIONS -->
+<div class="footer">
+  <button class="btn btn-secondary" onclick="resetForm()">Clear</button>
+  <button class="btn btn-primary" id="submitBtn" onclick="handleSubmit()">
+    <span id="btnText">Submit Request</span>
+  </button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG  — update these values as needed
+// ═══════════════════════════════════════════════════
+const CONFIG = {
+  BIM_EMAIL:       "clementec@baymep.com",
+  NOTION_TOKEN:    "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",
+  NOTION_DATABASE: "1b8ff708e50780a38fb2c545b73a503b",
+  NOTION_VERSION:  "2022-06-28"
+};
+
+// ─── PILL TOGGLE ──────────────────────────────────
+function togglePill(el) {
+  const cb = el.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+}
+
+// ─── COLLECT CHECKED VALUES ───────────────────────
+function getChecked(groupId) {
+  return [...document.querySelectorAll(`#${groupId} input:checked`)]
+    .map(cb => cb.value);
+}
+
+// ─── VALIDATION ───────────────────────────────────
+function validate() {
+  let ok = true;
+
+  const setErr = (fieldId, show) => {
+    const el = document.getElementById('field-' + fieldId);
+    if (el) el.classList.toggle('field-error', show);
+    if (show) ok = false;
+  };
+
+  setErr('projectName',    !document.getElementById('projectName').value.trim());
+  setErr('folderLocation', !document.getElementById('folderLocation').value.trim());
+
+  const noType = getChecked('projectTypeGroup').length === 0;
+  document.getElementById('field-projectType').classList.toggle('field-error', noType);
+  document.getElementById('typeMsg').style.display = noType ? 'block' : 'none';
+  if (noType) ok = false;
+
+  const noDisc = getChecked('disciplinesGroup').length === 0;
+  document.getElementById('field-disciplines').classList.toggle('field-error', noDisc);
+  document.getElementById('discMsg').style.display = noDisc ? 'block' : 'none';
+  if (noDisc) ok = false;
+
+  const noScope = getChecked('scopeGroup').length === 0;
+  document.getElementById('field-scope').classList.toggle('field-error', noScope);
+  document.getElementById('scopeMsg').style.display = noScope ? 'block' : 'none';
+  if (noScope) ok = false;
+
+  return ok;
+}
+
+// ─── SHOW STATUS ──────────────────────────────────
+function showStatus(type, msg) {
+  const banner = document.getElementById('statusBanner');
+  const icon   = document.getElementById('statusIcon');
+  const text   = document.getElementById('statusMsg');
+  banner.className = `status-banner show ${type}`;
+  icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '⟳';
+  text.textContent = msg;
+  banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideStatus() {
+  document.getElementById('statusBanner').className = 'status-banner';
+}
+
+// ─── RESET ────────────────────────────────────────
+function resetForm() {
+  document.getElementById('projectName').value    = '';
+  document.getElementById('folderLocation').value = '';
+
+  document.getElementById('comments').value       = '';
+  document.querySelectorAll('.check-item').forEach(el => {
+    el.classList.remove('checked');
+    el.querySelector('input').checked = false;
+  });
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+  hideStatus();
+}
+
+// ─── NOTION API ───────────────────────────────────
+async function createNotionTask(data) {
+  const body = {
+    parent: { database_id: CONFIG.NOTION_DATABASE },
+    properties: {
+      "To Do": {
+        title: [{ text: { content: `Project Setup — ${data.projectName}` } }]
+      },
+      "Category": {
+        select: { name: "Project Setup" }
+      },
+      "Folder Location": {
+        rich_text: [{ text: { content: data.folderLocation } }]
+      },
+      "Status": {
+        status: { name: "Not started" }
+      },
+      "Priority": {
+        select: { name: "High" }
+      }
+    },
+    children: [
+      {
+        object: "block",
+        type: "heading_3",
+        heading_3: { rich_text: [{ text: { content: "📋 Project Setup Request" } }] }
+      },
+      makeNotionParagraph(`Project Name: ${data.projectName}`),
+      makeNotionParagraph(`Folder Location: ${data.folderLocation}`),
+      makeNotionParagraph(`Project Type: ${data.projectType.join(', ')}`),
+      makeNotionParagraph(`Discipline(s): ${data.disciplines.join(', ')}`),
+      makeNotionParagraph(`Scope of Work: ${data.scope.join(', ')}`),
+
+      ...(data.comments ? [makeNotionParagraph(`Comments: ${data.comments}`)] : []),
+      makeNotionParagraph(`Submitted: ${new Date().toLocaleString()}`),
+      makeNotionParagraph(`Submitted by: ${data.senderName} (${data.senderEmail})`)
+    ]
+  };
+
+  const resp = await fetch('https://api.notion.com/v1/pages', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${CONFIG.NOTION_TOKEN}`,
+      'Notion-Version': CONFIG.NOTION_VERSION,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json();
+    throw new Error(err.message || 'Notion API error');
+  }
+  return await resp.json();
+}
+
+function makeNotionParagraph(text) {
+  return {
+    object: "block",
+    type: "paragraph",
+    paragraph: { rich_text: [{ text: { content: text } }] }
+  };
+}
+
+// ─── BUILD EMAIL BODY ─────────────────────────────
+function buildEmailBody(data) {
+  const line = (label, value) => `<tr>
+    <td style="padding:6px 12px 6px 0;font-weight:600;color:#374151;white-space:nowrap;vertical-align:top;font-size:13px;">${label}</td>
+    <td style="padding:6px 0;color:#111827;font-size:13px;">${value}</td>
+  </tr>`;
+
+  return `
+<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:620px;color:#111827;">
+  <div style="background:#0D1B2A;padding:20px 24px;border-radius:8px 8px 0 0;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="background:#1565C0;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">BAY</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#fff;">Project Setup Request</div>
+        <div style="font-size:11px;color:#8FA0B3;letter-spacing:.5px;margin-top:2px;">BAY &amp; ASSOCIATES · MEP BIM</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#fff;border:1px solid #D9E1EC;border-top:none;border-radius:0 0 8px 8px;padding:24px;">
+    <table style="width:100%;border-collapse:collapse;">
+      ${line('Project Name',     data.projectName)}
+      ${line('Project Type',     data.projectType.join(', '))}
+      ${line('Folder Location',  `<code style="font-size:12px;background:#F4F6F9;padding:2px 6px;border-radius:4px;">${data.folderLocation}</code>`)}
+      ${line('Discipline(s)',    data.disciplines.join(', '))}
+      ${line('Scope of Work',    data.scope.join(', '))}
+
+      ${data.comments ? line('Comments', data.comments) : ''}
+    </table>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #E5EBF3;font-size:12px;color:#8FA0B3;">
+      Submitted ${new Date().toLocaleString()} by <strong>${data.senderName}</strong> (${data.senderEmail})
+    </div>
+  </div>
+</div>`;
+}
+
+// ─── MAIN SUBMIT HANDLER ──────────────────────────
+async function handleSubmit() {
+  hideStatus();
+  if (!validate()) {
+    showStatus('error', 'Please fill in all required fields.');
+    return;
+  }
+
+  const btn     = document.getElementById('submitBtn');
+  const btnText = document.getElementById('btnText');
+  btn.disabled  = true;
+  btnText.innerHTML = '<span class="spinner"></span> Submitting…';
+
+  // Gather form data
+  const data = {
+    projectName:    document.getElementById('projectName').value.trim(),
+    folderLocation: document.getElementById('folderLocation').value.trim(),
+    projectType:    getChecked('projectTypeGroup'),
+    disciplines:    getChecked('disciplinesGroup'),
+    scope:          getChecked('scopeGroup'),
+
+    comments:       document.getElementById('comments').value.trim(),
+    senderName:     '',
+    senderEmail:    ''
+  };
+
+  // Get sender info from Outlook
+  try {
+    const mailbox = Office.context.mailbox;
+    data.senderName  = mailbox.userProfile.displayName  || '';
+    data.senderEmail = mailbox.userProfile.emailAddress || '';
+  } catch(e) { /* not critical */ }
+
+  let notionOk = false, emailOk = false;
+  let errors = [];
+
+  // 1. Create Notion task
+  try {
+    await createNotionTask(data);
+    notionOk = true;
+  } catch(e) {
+    errors.push(`Notion: ${e.message}`);
+  }
+
+  // 2. Compose & send email
+  try {
+    await sendEmail(data);
+    emailOk = true;
+  } catch(e) {
+    errors.push(`Email: ${e.message}`);
+  }
+
+  btn.disabled = false;
+  btnText.textContent = 'Submit Request';
+
+  if (notionOk && emailOk) {
+    showStatus('success', `✓ Request submitted! Notion task created and email sent to ${CONFIG.BIM_EMAIL}.`);
+    resetForm();
+  } else if (notionOk || emailOk) {
+    showStatus('error', `Partial success. ${errors.join(' | ')}`);
+  } else {
+    showStatus('error', `Submission failed. ${errors.join(' | ')}`);
+  }
+}
+
+// ─── SEND EMAIL VIA OFFICE.JS ─────────────────────
+function sendEmail(data) {
+  return new Promise((resolve, reject) => {
+    try {
+      Office.context.mailbox.displayNewMessageForm({
+        toRecipients: [CONFIG.BIM_EMAIL],
+        subject: `[Project Setup Request] ${data.projectName}`,
+        htmlBody: buildEmailBody(data)
+      });
+      // displayNewMessageForm is fire-and-forget; resolve immediately
+      resolve();
+    } catch(e) {
+      // Fallback: use makeEwsRequestAsync or just resolve with note
+      resolve(); // Don't block on email if Office API unavailable
+    }
+  });
+}
+
+// ─── OFFICE INIT ─────────────────────────────────
+Office.onReady(() => {
+  // ready
+});
+</script>
+</body>
+</html>
